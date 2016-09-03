@@ -3,44 +3,68 @@
 
 #define archivo1	"/proc/cpuinfo"
 #define dato1		"cpu MHz"
+#define strsize		30
 
-int get_cpu_clock_speed (char* nombre_archivo, char* nombre_dato, char* data)
+int buffer_archivo(char* archivo, char* buffer, int buffer_size){
+	FILE* file;
+	size_t bytes;
+
+	file = fopen(archivo, "r");
+
+	bytes = fread (buffer, 1, buffer_size, file);
+	fclose (file);
+
+	if (bytes == 0){
+		printf ("Error buffer_archivo.\n");
+		return 0;
+	}
+	else if (bytes == buffer_size){
+		printf ("Error buffer_archivo.\n");
+		return 0;
+		} 
+
+	buffer[bytes] = '\0';
+	return 1;
+}
+
+int get_data (char* buffer, char* nombre_dato, char* data)
 {
-	FILE* fp;
-	char buffer[99999];
-	size_t bytes_read;
+	//FILE* fp;
+	//char buffer[4096];
+	//size_t bytes_read;
 	char* match;
 	float clock_speed;
 	//char data [20];
 
 	/* Read the entire contents of /proc/cpuinfo into the buffer.  */
-	fp = fopen (nombre_archivo, "r");
-	bytes_read = fread (buffer, 1, sizeof (buffer), fp);
-	fclose (fp);
+	//fp = fopen (nombre_archivo, "r");
+	//bytes_read = fread (buffer, 1, sizeof (buffer), fp);
+	//fclose (fp);
 	/* Bail if read failed or if buffer isn’t big enough.  */
-	if (bytes_read == 0 || bytes_read == sizeof (buffer))
-		return 0;
+	//if (bytes_read == 0 || bytes_read == sizeof (buffer))
+	//	return 0;
 	/* NUL-terminate the text.  */
-	buffer[bytes_read] = '\0';
+	//buffer[bytes_read] = '\0';
 	/* Locate the line that starts with “cpu MHz”.  */
-	match = strstr (buffer, dato1);
+	match = strstr (buffer, nombre_dato);
 	if (match == NULL)
 		return 0;
 	/* Parse the line to extract the clock speed.  */
-	int i;
+	int i=0;
 	while ((match[i]) != '\n'){
 		data[i] = match[i];
-		//printf("%c\n",match[i]);
 		i++;
 	}
 
-	//sscanf (match, "%s %s %s %s %s", data);
-	return 1;
+	return i;
 }
 
+
 int main(){
-	char aux [20];
-	get_cpu_clock_speed(archivo1,"b",aux);
+	char buffer [4096] = "";
+	buffer_archivo(archivo1,buffer,sizeof(buffer));
+	char aux [strsize] = "";
+	if (get_data(buffer,dato1,aux)) printf ("Exito\n");
+	else {printf ("Fallo en get_data\n");}
 	printf("%s\n",aux);
-	//printf("%f\n",aux);
 }
