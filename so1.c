@@ -4,8 +4,13 @@
 #define archivo1	"/proc/cpuinfo"
 #define dato1		"cpu MHz"
 #define strsize		30
+#define buffersize	4096
 
-int buffer_archivo(char* archivo, char* buffer, int buffer_size){
+unsigned char buffer_archivo(char* archivo, char* buffer, int buffer_size);
+unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado);
+
+
+unsigned char buffer_archivo(char* archivo, char* buffer, int buffer_size){
 	FILE* file;
 	size_t bytes;
 
@@ -27,44 +32,32 @@ int buffer_archivo(char* archivo, char* buffer, int buffer_size){
 	return 1;
 }
 
-int get_data (char* buffer, char* nombre_dato, char* data)
+unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado)
 {
-	//FILE* fp;
-	//char buffer[4096];
-	//size_t bytes_read;
 	char* match;
-	float clock_speed;
-	//char data [20];
 
-	/* Read the entire contents of /proc/cpuinfo into the buffer.  */
-	//fp = fopen (nombre_archivo, "r");
-	//bytes_read = fread (buffer, 1, sizeof (buffer), fp);
-	//fclose (fp);
-	/* Bail if read failed or if buffer isn’t big enough.  */
-	//if (bytes_read == 0 || bytes_read == sizeof (buffer))
-	//	return 0;
-	/* NUL-terminate the text.  */
-	//buffer[bytes_read] = '\0';
 	/* Locate the line that starts with “cpu MHz”.  */
-	match = strstr (buffer, nombre_dato);
-	if (match == NULL)
-		return 0;
+	match = strstr (buffer_archivo, dato_buscado);
+	if (match == NULL)	return 0;
+
 	/* Parse the line to extract the clock speed.  */
 	int i=0;
 	while ((match[i]) != '\n'){
-		data[i] = match[i];
+		dato_encontrado[i] = match[i];
 		i++;
 	}
 
-	return i;
+	return 1;
 }
 
-
 int main(){
-	char buffer [4096] = "";
-	buffer_archivo(archivo1,buffer,sizeof(buffer));
-	char aux [strsize] = "";
-	if (get_data(buffer,dato1,aux)) printf ("Exito\n");
-	else {printf ("Fallo en get_data\n");}
-	printf("%s\n",aux);
+
+	char buffer [buffersize] = "";
+
+	if(!buffer_archivo(archivo1,buffer,sizeof(buffer))) printf("Error leyendo archivo.\n");
+
+	char dato_buscado [strsize] = "";
+
+	if (get_data(buffer,dato1,dato_buscado)) printf("%s\n",dato_buscado);
+	else {printf ("Fallo en get_data\n");}	
 }
