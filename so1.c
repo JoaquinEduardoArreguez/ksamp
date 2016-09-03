@@ -8,8 +8,25 @@
 
 unsigned char buffer_archivo(char* archivo, char* buffer, int buffer_size);
 unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado);
+unsigned char print_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado);
 
 
+int main(){
+
+	char buffer [buffersize] = "";
+	char dato_buscado [strsize] = "";
+
+	if(!buffer_archivo(archivo1,buffer,sizeof(buffer))) printf("Error leyendo archivo(buffer_archivo).\n");
+
+	print_data(buffer,dato1,dato_buscado);
+}
+
+// Sección separada para evitar ensuciar el main.
+unsigned char print_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado){
+	if (get_data(buffer_archivo,dato_buscado,dato_encontrado)) printf("%s\n",dato_encontrado);
+	else {printf ("Fallo en get_data\n");}
+}
+// Función que recibe un archivo y guarda su contenido en un buffer
 unsigned char buffer_archivo(char* archivo, char* buffer, int buffer_size){
 	FILE* file;
 	size_t bytes;
@@ -31,9 +48,9 @@ unsigned char buffer_archivo(char* archivo, char* buffer, int buffer_size){
 	buffer[bytes] = '\0';
 	return 1;
 }
-
-unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado)
-{
+//Función que recibe un buffer de datos (string) y busca dentro del mismo la ocurrencia
+//de otro string, luego devuelve la línea del string encontrado.
+unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado){
 	char* match;
 
 	/* Locate the line that starts with “cpu MHz”.  */
@@ -48,16 +65,4 @@ unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_enc
 	}
 
 	return 1;
-}
-
-int main(){
-
-	char buffer [buffersize] = "";
-
-	if(!buffer_archivo(archivo1,buffer,sizeof(buffer))) printf("Error leyendo archivo.\n");
-
-	char dato_buscado [strsize] = "";
-
-	if (get_data(buffer,dato1,dato_buscado)) printf("%s\n",dato_buscado);
-	else {printf ("Fallo en get_data\n");}	
 }
