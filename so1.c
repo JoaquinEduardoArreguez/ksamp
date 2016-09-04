@@ -2,6 +2,9 @@
 #include <string.h>
 
 #define archivo1	"/proc/cpuinfo"
+
+#define dato0		"vendor_id"
+#define dato1		"model name"
 #define dato1		"cpu MHz"
 #define strsize		30
 #define buffersize	4096
@@ -9,7 +12,6 @@
 unsigned char buffer_archivo(char* archivo, char* buffer, int buffer_size);
 unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado);
 unsigned char print_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado);
-
 
 int main(){
 
