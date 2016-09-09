@@ -1,0 +1,5 @@
+tipo y modelo de cpu			-		/proc/cpuinfo
+version de kernel			-		/proc/version
+cantidad de tiempo encendido		-		/proc/uptime	(dia, hora, minutos y segundos)
+cant sist archivo soportados		-		/proc/filesystems
+
