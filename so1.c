@@ -5,7 +5,7 @@
 
 #define dato0		"vendor_id"
 #define dato1		"model name"
-#define dato1		"cpu MHz"
+#define dato2		"cpu MHz"
 #define strsize		30
 #define buffersize	4096
 
@@ -20,7 +20,7 @@ int main(){
 
 	if(!buffer_archivo(archivo1,buffer,sizeof(buffer))) printf("Error leyendo archivo(buffer_archivo).\n");
 
-	print_data(buffer,dato1,dato_buscado);
+	print_data(buffer,dato2,dato_buscado);
 }
 
 // Sección separada para evitar ensuciar el main.
