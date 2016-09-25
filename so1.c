@@ -115,7 +115,8 @@ void print_l(char* buffer_archivo, char* dato_encontrado){
 unsigned char print_data (char* buffer_archivo, char* dato_buscado, char* dato_encontrado){
 	memset(dato_encontrado,'\0',strsize);
 	if (get_data(buffer_archivo,dato_buscado,dato_encontrado)) printf("%s\n",dato_encontrado);
-	else {printf ("Fallo en get_data\n");}
+	else {printf ("Fallo en get_data\n");return 0;}
+	return 1;
 }
 
 /* Función que recibe un archivo y guarda su contenido en un buffer */
@@ -166,7 +167,7 @@ unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_enc
 /* Función al vicio por ahora.*/
 long int tamanio_buffer(char* archivo){
 	FILE* file;
-	size_t bytes;
+	//size_t bytes;
 
 	file = fopen(archivo, "r");
 
