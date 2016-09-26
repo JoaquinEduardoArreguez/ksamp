@@ -8,6 +8,9 @@
 #define REQINFO   1
 #define NREQINFO  0
 
+
+
+
 /*  Estructura que define una información requerida y una función especial de impresión si fuera necesaria. */
 struct info_req{
   char*   info;
@@ -29,18 +32,26 @@ struct data_getter{
   (struct data_getter* self,char* path, char req_info, int cant_info,struct  info_req* info_req,void (*formatted_print)(char* string));
 };
 
+
+
+
 /*  Declaración de funciones de "data_getter" */
 void constructor(struct data_getter* self,char* path, char req_info, int cant_info,struct  info_req* info_req,void (*formatted_print)(char* string));
-void buffer_archivo (struct data_getter* self);
-void print_info_requerida(struct data_getter* self);
-void get_info_from_buffer (struct data_getter* self, int index_info);
-void print_formatted_uptime(char* string);
-void print_formatted_n_filesystems(char*  string);
-void print_formatted_CPU_time(char* string);
-void print_formatted_context_change(char* string);
-void print_formatted_fecha_booteo (char*  string);
-void print_formatted_n_procesos (char*  string);
-void print_formatted_kern_vers  (char*  string);
+void buffer_archivo         (struct data_getter* self);
+void print_info_requerida   (struct data_getter* self);
+void get_info_from_buffer   (struct data_getter* self, int index_info);
+void print_formatted_uptime         (char* string);
+void print_formatted_n_filesystems  (char*  string);
+void print_formatted_CPU_time       (char* string);
+void print_formatted_context_change (char* string);
+void print_formatted_fecha_booteo   (char*  string);
+void print_formatted_n_procesos     (char*  string);
+void print_formatted_kern_vers      (char*  string);
+
+
+
+
+/*    IMPLEMENTACION DE FUNCIONES   */
 
 /*  Constructor que inicializa las estructuras "data_getter"*/
 void constructor(struct data_getter* self,char* path, char req_info, int cant_info,struct  info_req* info_req,void (*formatted_print)(char* string)){
@@ -124,45 +135,6 @@ void get_info_from_buffer (struct data_getter* self, int i){
   }
 }
 
-/*  Función Main. */
-int main(int argc, char const *argv[]) {
-
-  struct data_getter archivo_cpuinfo;
-  archivo_cpuinfo.constructor = constructor;
-  struct info_req inforeq_archivo_cpuinfo [2] = {{"vendor_id",NULL},{"model name",NULL}};
-  (*archivo_cpuinfo.constructor)(&archivo_cpuinfo,"/proc/cpuinfo",REQINFO,sizeof(inforeq_archivo_cpuinfo)/sizeof(struct info_req),inforeq_archivo_cpuinfo,NULL);
-  (*archivo_cpuinfo.print_info_requerida)(&archivo_cpuinfo);
-
-  struct  data_getter archivo_kernel_version;
-  archivo_kernel_version.constructor  = constructor;
-  (*archivo_kernel_version.constructor)(&archivo_kernel_version,"/proc/sys/kernel/osrelease",NREQINFO,0,NULL,print_formatted_kern_vers);
-  (*archivo_kernel_version.print_info_requerida)(&archivo_kernel_version);
-
-  struct  data_getter archivo_uptime;
-  archivo_uptime.constructor  = constructor;
-  (*archivo_uptime.constructor)(&archivo_uptime,"/proc/uptime",NREQINFO,0,NULL,print_formatted_uptime);
-  (*archivo_uptime.print_info_requerida)(&archivo_uptime);
-
-  struct  data_getter archivo_filesystems;
-  archivo_filesystems.constructor = constructor;
-  (*archivo_filesystems.constructor)(&archivo_filesystems,"/proc/filesystems",NREQINFO,0,NULL,print_formatted_n_filesystems);
-  (*archivo_filesystems.print_info_requerida)(&archivo_filesystems);
-
-  struct  data_getter archivo_stat;
-  archivo_stat.constructor  = constructor;
-  struct  info_req inforeq_archivo_stat  [4] = {
-    {"cpu",print_formatted_CPU_time},
-    {"ctxt",print_formatted_context_change},
-    {"btime",print_formatted_fecha_booteo},
-    {"processes",print_formatted_n_procesos}
-  };
-  (*archivo_stat.constructor)(&archivo_stat,"/proc/stat",REQINFO,sizeof(inforeq_archivo_stat)/sizeof(struct info_req),inforeq_archivo_stat,NULL);
-  (*archivo_stat.print_info_requerida)(&archivo_stat);
-
-  return 0;
-}
-
-
 /*  Prints especialmente formateados  */
 
 /*  Función que devuelve la cantidad de filesystems soportados por el kernel. */
@@ -221,4 +193,51 @@ void print_formatted_n_procesos (char*  string){
 
 void print_formatted_kern_vers  (char*  string){
   printf("Kernel Version\t: %s", string);
+}
+
+
+
+
+/*  Función Main. */
+int main(int argc, char const *argv[]) {
+
+  struct data_getter archivo_cpuinfo;
+  archivo_cpuinfo.constructor = constructor;
+  struct info_req inforeq_archivo_cpuinfo [2] = {{"vendor_id",NULL},{"model name",NULL}};
+  (*archivo_cpuinfo.constructor)(&archivo_cpuinfo,"/proc/cpuinfo",REQINFO,sizeof(inforeq_archivo_cpuinfo)/sizeof(struct info_req),inforeq_archivo_cpuinfo,NULL);
+  (*archivo_cpuinfo.print_info_requerida)(&archivo_cpuinfo);
+
+  struct  data_getter archivo_kernel_version;
+  archivo_kernel_version.constructor  = constructor;
+  (*archivo_kernel_version.constructor)(&archivo_kernel_version,"/proc/sys/kernel/osrelease",NREQINFO,0,NULL,print_formatted_kern_vers);
+  (*archivo_kernel_version.print_info_requerida)(&archivo_kernel_version);
+
+  struct  data_getter archivo_uptime;
+  archivo_uptime.constructor  = constructor;
+  (*archivo_uptime.constructor)(&archivo_uptime,"/proc/uptime",NREQINFO,0,NULL,print_formatted_uptime);
+  (*archivo_uptime.print_info_requerida)(&archivo_uptime);
+
+  struct  data_getter archivo_filesystems;
+  archivo_filesystems.constructor = constructor;
+  (*archivo_filesystems.constructor)(&archivo_filesystems,"/proc/filesystems",NREQINFO,0,NULL,print_formatted_n_filesystems);
+  (*archivo_filesystems.print_info_requerida)(&archivo_filesystems);
+
+  struct  data_getter archivo_stat;
+  archivo_stat.constructor  = constructor;
+  struct  info_req inforeq_archivo_stat  [4] = {
+    {"cpu",print_formatted_CPU_time},
+    {"ctxt",print_formatted_context_change},
+    {"btime",print_formatted_fecha_booteo},
+    {"processes",print_formatted_n_procesos}
+  };
+  (*archivo_stat.constructor)(&archivo_stat,"/proc/stat",REQINFO,sizeof(inforeq_archivo_stat)/sizeof(struct info_req),inforeq_archivo_stat,NULL);
+  (*archivo_stat.print_info_requerida)(&archivo_stat);
+
+/*
+  struct data_getter  archivo_diskstats;
+  archivo_diskstats.constructor = constructor;
+  struct  info_req  inforeq_archivo_diskstats = {"sda",print_formatted_peticiones_disco};*/
+
+
+  return 0;
 }
