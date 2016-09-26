@@ -13,6 +13,7 @@
 
 
 
+
 #define archivo1	"/proc/cpuinfo"
 #define archivo_kernel_version	"/proc/sys/kernel/osrelease"
 #define archivo3	"/proc/uptime"
@@ -34,6 +35,7 @@ void print_simple(char* buffer_archivo, char* dato_encontrado);
 void print_s(char* buffer_archivo, char* dato_encontrado);
 void print_l(char* buffer_archivo, char* dato_encontrado);
 void print(enum tipo_impresion mi_tipo_impresion);
+/*****************************/
 
 
 int main(int argc, char **argv){
@@ -119,6 +121,12 @@ unsigned char print_data (char* buffer_archivo, char* dato_buscado, char* dato_e
 	return 1;
 }
 
+
+void print_buffer(char* buffer_archivo){
+	memset(dato_encontrado,'\0',strsize);
+	printf("%s\n", buffer_archivo );
+}
+
 /* Función que recibe un archivo y guarda su contenido en un buffer */
 unsigned char buffer_archivo(char* archivo, char* buffer, int buffer_size){
 	FILE* file;
@@ -165,7 +173,7 @@ unsigned char get_data (char* buffer_archivo, char* dato_buscado, char* dato_enc
 }
 
 /* Función al vicio por ahora.*/
-long int tamanio_buffer(char* archivo){
+unsigned int tamanio_buffer(char* archivo){
 	FILE* file;
 	//size_t bytes;
 
