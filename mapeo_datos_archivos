@@ -6,3 +6,6 @@ tiempo user,system,idle         -   /proc/stat
 cambios de contexto(ctxt)       -   /proc/stat
 fecha y hora del booteo(btime)  -   /proc/stat
 n proc creados  (processes)     -   /proc/stat
+peticiones a disco (sda (*)**)  -   /proc/diskstats
+/meminfo
+/loadavg

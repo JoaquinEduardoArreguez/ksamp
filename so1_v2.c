@@ -154,7 +154,7 @@ void print_formatted_uptime(char* string){
   sscanf(string,"%d",&uptime);
   time_t  segundos = uptime;
   struct tm*  tiempo = gmtime (&segundos);
-  printf("Tiempo Uptime\t: %dD %d:%d:%d\n", tiempo->tm_yday, tiempo->tm_hour, tiempo->tm_min, tiempo->tm_sec );
+  printf("Tiempo Uptime\t\t: %dD %d:%d:%d\n", tiempo->tm_yday, tiempo->tm_hour, tiempo->tm_min, tiempo->tm_sec );
 }
 
 /*  Función de impresión especial para formatear tiempo de CPU usado en Usuario, Sistema y tiempo Idle*/
@@ -168,7 +168,7 @@ void print_formatted_CPU_time(char* string){
 void print_formatted_context_change(char* string){
   int n_cambios_contexto;
   sscanf(string, "ctxt  %d",&n_cambios_contexto);
-  printf("Cambios de contexto:\t%d\n",n_cambios_contexto);
+  printf("Cambios de contexto\t: %d\n",n_cambios_contexto);
 }
 
 void print_formatted_fecha_booteo (char*  string){
@@ -181,18 +181,42 @@ void print_formatted_fecha_booteo (char*  string){
   char buf [80];
 
   strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", tiempo);
-  printf("Encendido desde\t:\t%s\n", buf);
+  printf("Encendido desde\t\t%s\n", buf);
 
 }
 
 void print_formatted_n_procesos (char*  string){
   int n_proc;
   sscanf(string, "processes %d",&n_proc);
-  printf("Procesos creados:\t%d\n",n_proc);
+  printf("Procesos creados\t: %d\n",n_proc);
 }
 
 void print_formatted_kern_vers  (char*  string){
-  printf("Kernel Version\t: %s", string);
+  printf("Kernel Version\t\t: %s", string);
+}
+
+void print_formatted_peticiones_disco (char*  string){
+  int peticiones;
+  sscanf(string, "sda %d",&peticiones);
+  printf("Peticiones a disco\t: %d\n", peticiones );
+}
+
+void print_formatted_mem_total(char*  string){
+  int memtotal;
+  sscanf(string, "MemTotal: %d",&memtotal);
+  printf("Memoria Total\t\t: %d\tMb\n", memtotal/1000);
+}
+
+void print_formatted_mem_disp(char* string){
+  int memav;
+  sscanf(string, "MemAvailable: %d",&memav);
+  printf("Memoria Disp\t\t: %d\tMb\n", memav/1000);
+}
+
+void print_formatted_loadavg(char*  string){
+  float load_min;
+  sscanf(string, "%f", &load_min);
+  printf("Load Average (1 min)\t: %f\n",load_min);
 }
 
 
@@ -233,10 +257,27 @@ int main(int argc, char const *argv[]) {
   (*archivo_stat.constructor)(&archivo_stat,"/proc/stat",REQINFO,sizeof(inforeq_archivo_stat)/sizeof(struct info_req),inforeq_archivo_stat,NULL);
   (*archivo_stat.print_info_requerida)(&archivo_stat);
 
-/*
+
   struct data_getter  archivo_diskstats;
   archivo_diskstats.constructor = constructor;
-  struct  info_req  inforeq_archivo_diskstats = {"sda",print_formatted_peticiones_disco};*/
+  //struct  info_req  inforeq_archivo_diskstats = {"sda",print_formatted_peticiones_disco};
+  (*archivo_diskstats.constructor)(&archivo_diskstats,"/proc/diskstats",NREQINFO,0,NULL,print_formatted_peticiones_disco);
+  (*archivo_diskstats.print_info_requerida)(&archivo_diskstats);
+
+  struct data_getter  archivo_meminfo;
+  archivo_meminfo.constructor=constructor;
+  struct  info_req  inforeq_archivo_meminfo [2] = {
+    {"MemTotal:",print_formatted_mem_total},
+    {"MemAvailable:",print_formatted_mem_disp}
+  };
+  (*archivo_meminfo.constructor)(&archivo_meminfo,"/proc/meminfo",REQINFO,sizeof(inforeq_archivo_meminfo)/sizeof(struct info_req),inforeq_archivo_meminfo,NULL);
+  (*archivo_meminfo.print_info_requerida)(&archivo_meminfo);
+
+  struct  data_getter archivo_loadavg;
+  archivo_loadavg.constructor = constructor;
+  (*archivo_loadavg.constructor)(&archivo_loadavg,"/proc/loadavg",NREQINFO,0,NULL,print_formatted_loadavg);
+  (*archivo_loadavg.print_info_requerida)(&archivo_loadavg);
+
 
 
   return 0;
